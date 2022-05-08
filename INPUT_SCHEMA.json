@@ -1,0 +1,37 @@
+{
+  "title": "Quick Instagram profile checker",
+  "description": "Only profile URLs accepted, you will get profile data and up to 7 recent posts",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "startUrls": {
+      "title": "Start URLs",
+      "type": "array",
+      "description": "URLs to start with.",
+      "editor": "requestListSources",
+      "prefill": [
+        { "url": "https://www.instagram.com/jessicarmaniac" }
+      ]
+    },
+    "proxy": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "description": "<strong>A proxy server is required to run this actor!</strong> Either use an Apify residential proxy, or provide your own proxy servers. Datacenter proxies will not work.",
+      "prefill": {
+          "useApifyProxy": true
+      },
+      "editor": "proxy",
+      "sectionCaption": "Proxy & browser configuration",
+      "sectionDescription": "Select your proxy here. Use Residential for scrapping without login, but automatic for scraping with login! You can also change the maximum times the browser will retry requests and tell it how long to wait for the page to scroll."
+      },
+      "maxRequestRetries": {
+          "title": "Max request retries",
+          "type": "integer",
+          "description": "Select how many times the page will be retried if the scraper is blocked or encounters other errors.",
+          "default": 7
+      }
+  },
+  "required": [
+    "startUrls"
+  ]
+}
