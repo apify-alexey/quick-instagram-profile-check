@@ -8,7 +8,7 @@ const { utils: { log } } = Apify;
 Apify.main(async () => {
     const input = await Apify.getInput();
     const {
-        startUrls,
+        directUrls = [],
         proxy = { useApifyProxy: true },
         maxRequestRetries,
         debugLog = false,
@@ -18,7 +18,7 @@ Apify.main(async () => {
         log.setLevel(log.LEVELS.DEBUG);
     }
 
-    const requestList = await Apify.openRequestList('start-urls', startUrls);
+    const requestList = await Apify.openRequestList('start-urls', directUrls.map((url) => ({ url })));
     const requestQueue = await Apify.openRequestQueue();
     const proxyConfiguration = await Apify.createProxyConfiguration(proxy);
 
@@ -32,8 +32,8 @@ Apify.main(async () => {
         persistCookiesPerSession: false,
         preNavigationHooks: [
             async (context) => {
-                const url = context?.request?.url;
-                if (url?.endsWith('/embed')) {
+                const url = context?.request?.url?.toLowerCase();
+                if (url?.endsWith('/embed') || url?.includes('/embed/')) {
                     return;
                 }
                 // keep original url for future reference
@@ -55,7 +55,9 @@ Apify.main(async () => {
                 await handleInitialInlineJson(context, input);
             } catch (err) {
                 log.error(`[PARSING]: ${err?.message || err}`);
-                await Apify.setValue('lastError', context.body, { contentType: 'text/html' });
+                if (debugLog) {
+                    await Apify.setValue('lastError', context.body, { contentType: 'text/html' });
+                }
                 throw err;
             }
         },

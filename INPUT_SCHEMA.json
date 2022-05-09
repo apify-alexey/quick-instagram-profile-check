@@ -1,17 +1,18 @@
 {
   "title": "Quick Instagram profile checker",
-  "description": "Only profile URLs accepted, you will get profile data and up to 7 recent posts",
+  "description": "Only profile URLs accepted, you will get profile data and limited most recent posts",
   "type": "object",
   "schemaVersion": 1,
   "properties": {
-    "startUrls": {
-      "title": "Start URLs",
+    "directUrls": {
+      "title": "Add Instagram profile URLs you want to scrape ",
       "type": "array",
-      "description": "URLs to start with.",
-      "editor": "requestListSources",
-      "prefill": [
-        { "url": "https://www.instagram.com/jessicarmaniac" }
-      ]
+      "description": "Add one or more Instagram profile URLs to scrape.",
+      "editor": "stringList",
+      "placeholderValue": "URL",
+      "prefill": ["https://www.instagram.com/apifytech/"],
+      "patternValue": "https:\\/\\/(www\\.)?instagram\\.com\\/.+",
+      "uniqueItems": true
     },
     "proxy": {
       "title": "Proxy configuration",
@@ -32,6 +33,6 @@
       }
   },
   "required": [
-    "startUrls"
+    "directUrls"
   ]
 }
