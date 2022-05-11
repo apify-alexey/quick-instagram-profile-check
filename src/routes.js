@@ -2,6 +2,7 @@ const Apify = require('apify');
 
 const { extractProfile } = require('./extract');
 const { formatSinglePost } = require('./graphql-lib');
+const { extendFunction } = require('./extend-scraper');
 
 const { utils: { log } } = Apify;
 
@@ -14,7 +15,18 @@ const jsonFromHtml = (body) => {
     return JSON.parse(jtext);
 };
 
-exports.handleInitialInlineJson = async ({ request, body }) => {
+exports.handleInitialInlineJson = async ({ request, body }, input) => {
+    const extendOutputFunction = await extendFunction({
+        output: async (data) => {
+            if (!data) {
+                return;
+            }
+            await Apify.pushData(data);
+        },
+        input,
+        key: 'extendOutputFunction',
+    });
+
     const inlineJson = jsonFromHtml(body);
 
     let dataObject;
@@ -42,8 +54,10 @@ exports.handleInitialInlineJson = async ({ request, body }) => {
         dataObject = inlineJson;
     }
 
-    await Apify.pushData({
+    const output = {
         ...dataObject,
         externalUrl: request?.userData?.origin || request.url,
-    });
+    };
+    await extendOutputFunction(output);
+    // await Apify.pushData();
 };
