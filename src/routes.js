@@ -31,9 +31,9 @@ exports.apiProfileRequest = (url) => {
 };
 
 exports.handleProfileJson = async ({ request, json }, input) => {
+    const externalUrl = request?.userData?.origin || request.url;
     if (!(json && json?.data?.user)) {
-        log.error(`[DATA_FAILED], ${request.url}`);
-        return;
+        throw new Error(`Profile not found ${externalUrl}`);
     }
     const extendOutputFunction = await extendFunction({
         output: async (data) => {
@@ -50,7 +50,7 @@ exports.handleProfileJson = async ({ request, json }, input) => {
 
     const output = {
         ...dataObject,
-        externalUrl: request?.userData?.origin || request.url,
+        externalUrl,
     };
     await extendOutputFunction(output);
 };
