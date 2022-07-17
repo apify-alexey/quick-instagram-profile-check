@@ -33,7 +33,7 @@ Apify.main(async () => {
         useSessionPool: false,
         persistCookiesPerSession: false,
         handlePageFunction: async (context) => {
-            handleProfileJson(context, input);
+            return handleProfileJson(context, input);
         },
     });
 
