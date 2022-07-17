@@ -1,7 +1,6 @@
 const Apify = require('apify');
-const path = require('path');
 
-const { handleInitialInlineJson } = require('./src/routes');
+const { apiProfileRequest, handleProfileJson } = require('./src/routes');
 
 const { utils: { log } } = Apify;
 
@@ -14,11 +13,14 @@ Apify.main(async () => {
         debugLog = false,
     } = input;
 
+    if (!input.extendOutputFunction) {
+        // input.extendOutputFunction = 'async ({ item }) => { return item; }';
+    }
     if (debugLog) {
         log.setLevel(log.LEVELS.DEBUG);
     }
 
-    const requestList = await Apify.openRequestList('start-urls', directUrls.map((url) => ({ url })));
+    const requestList = await Apify.openRequestList('start-urls', directUrls.flatMap(apiProfileRequest));
     const requestQueue = await Apify.openRequestQueue();
     const proxyConfiguration = await Apify.createProxyConfiguration(proxy);
 
@@ -30,36 +32,8 @@ Apify.main(async () => {
         maxRequestRetries,
         useSessionPool: false,
         persistCookiesPerSession: false,
-        preNavigationHooks: [
-            async (context) => {
-                const url = context?.request?.url?.toLowerCase();
-                if (url?.endsWith('/embed') || url?.includes('/embed/')) {
-                    return;
-                }
-                // keep original url for future reference
-                context.request.userData = { ...context.request.userData, origin: url };
-                // transform original url into embed url
-                const originalUrl = new URL(url);
-                const originalPath = originalUrl?.pathname;
-                const additionalPath = '/embed';
-                const fullEmbedUrl = new URL(path.join(originalPath, additionalPath), originalUrl.origin).toString();
-                context.request.url = fullEmbedUrl;
-            },
-        ],
         handlePageFunction: async (context) => {
-            try {
-                // known issue - old posts have embeds without inline json
-                // thats why there is no additional paring for posts:
-                // when its a new post its inline json exactly the same as in profile
-                // if its older post there is html markup with counters, but not enough data to consider it valuable
-                await handleInitialInlineJson(context, input);
-            } catch (err) {
-                log.error(`[PARSING]: ${err?.message || err}`);
-                if (debugLog) {
-                    await Apify.setValue('lastError', context.body, { contentType: 'text/html' });
-                }
-                throw err;
-            }
+            handleProfileJson(context, input);
         },
     });
 

@@ -1,5 +1,5 @@
 ## Features
-Our free Quick Instagram Profile checker allows you to scrape top recent posts from a user's profile page. It can not scrape Instagram comments or other details, because quick-check based on DATACENTER proxies and have very limited access to Instagram. For more advanced usafe please consider [Instagram Scraper](https://apify.com/jaroslavhejlek/instagram-scraper)
+Our Quick Instagram Profile checker allows you to scrape top recent posts and videos from a user's profile page along with profile details without login or special proxy. For more advanced usage please consider [Instagram Scraper](https://apify.com/jaroslavhejlek/instagram-scraper)
  
 Or let us know if you need a [custom Instagram scraping solution](https://apify.com/custom-solutions).
 
@@ -41,48 +41,6 @@ The actor stores its results in a dataset. Each item is a separate item in the d
 
 You can manage the results in any language (Python, PHP, Node JS/NPM). See [our API reference](https://docs.apify.com/api/v2) to learn more about getting results from the Instagram Scraper.
 
-### Scraped Instagram posts
-The structure of each item in Instagram posts when scrolling looks like this:
-
-```jsonc
-{
-  "#debug": {
-    "pageType": "user",
-    "id": "teslamotors",
-    "userId": "297604134",
-    "userUsername": "teslamotors",
-    "userFullName": "Tesla",
-    "limit": 1000000,
-    "scrollWaitSecs": 0,
-    "shortcode": "B27C4aRBfet",
-    "postLocationId": null,
-    "postOwnerId": "297604134"
-  },
-  "queryUsername": "teslamotors",
-  "position": 10,
-  "type": "Image",
-  "shortCode": "B27C4aRBfet",
-  "caption": "@hub3rt picked up his Model 3 and brought our London team a cake. \nIf there is a purer thing in this world we would like to hear about it.",
-  "hashtags": [],
-  "mentions": [
-    "hub3rt"
-  ],
-  "url": "https://www.instagram.com/p/B27C4aRBfet",
-  "commentsCount": 926,
-  "dimensionsHeight": 1080,
-  "dimensionsWidth": 1080,
-  "displayUrl": "https://instagram.fyyc3-1.fna.fbcdn.net/v/t51.2885-15/e35/70538312_1124483511275040_7970075346943975868_n.jpg?_nc_ht=instagram.fyyc3-1.fna.fbcdn.net&_nc_cat=100&_nc_ohc=UBV8F4hhd_AAX_INMgA&oh=be328b96f1ad3fbb95b54a35b8b0eb79&oe=5F0D6E0E",
-  "id": "2142318720331413421",
-  "alt": "Photo by Tesla on September 27, 2019. Image may contain: one or more people, people standing and car",
-  "likesCount": 181500,
-  "timestamp": "2019-09-27T17:11:54.000Z",
-  "locationName": null,
-  "locationId": null,
-  "ownerUsername": "teslamotors",
-  "ownerId": "297604134"
-}
-```
-
 ### Scraped Instagram profile
 The structure of each user profile looks like this:
 
@@ -91,27 +49,70 @@ The structure of each user profile looks like this:
   "id": "29230178602",
   "username": "apifytech",
   "fullName": "Apify",
+  "biography": "Official account of the Apify team. We’re on a mission to make the web more programmable and more fun.",
   "externalUrl": "https://www.instagram.com/apifytech",
-  "followersCount": 187,
+  "externalUrlShimmed": "https://l.instagram.com/?u=https%3A%2F%2Fapify.it%2F36qNFkD&e=ATOlHlxCceIL4t5zzYn4W60bXT0r7NNU_hMxZppxXqyRoVhP77v2vZZh72nTBN16Ab_FsXgYzL4_BIXP&s=1",
+  "followersCount": 190,
+  "followsCount": 16,
+  "hasChannel": false,
+  "highlightReelCount": 6,
+  "isBusinessAccount": true,
+  "joinedRecently": false,
+  "businessCategoryName": "Personal Goods & General Merchandise Stores",
+  "private": false,
   "verified": false,
-  "profilePicUrl": "https://scontent.cdninstagram.com/v/t51.2885-19/106623918_555633185104955_8069061714137380269_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent.cdninstagram.com&_nc_cat=111&_nc_ohc=E9Wc4v1fOKkAX8rlFnr&edm=AGoB3sEBAAAA&ccb=7-4&oh=00_AT9Zjbcr9RTIe7T2XqB_BqGqPKSu7jRBuyN2jXsOGOlgNw&oe=62801491&_nc_sid=21ce66",
-  "profilePicUrlHD": "https://scontent.cdninstagram.com/v/t51.2885-19/106623918_555633185104955_8069061714137380269_n.jpg?stp=dst-jpg_s240x240&_nc_ht=scontent.cdninstagram.com&_nc_cat=111&_nc_ohc=E9Wc4v1fOKkAX8rlFnr&edm=AGoB3sEBAAAA&ccb=7-4&oh=00_AT-mkGPXIawNoWcE3fLlSGFgpHG93hSKFGmsHxA205fPGg&oe=62801491&_nc_sid=21ce66",
-  "postsCount": 24,
-  "latestPosts": [
+  "profilePicUrl": "https://scontent-den4-1.cdninstagram.com/v/t51.2885-19/106623918_555633185104955_8069061714137380269_n.jpg?stp=dst-jpg_s150x150&_nc_ht=scontent-den4-1.cdninstagram.com&_nc_cat=111&_nc_ohc=rsknq1RVRDYAX9MeRkm&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AT-RKF9hO4xxbmyvN2ptpIyK2JJvuALeFVsy2GYIt7d__g&oe=62DB0C11&_nc_sid=8fd12b",
+  "profilePicUrlHD": "https://scontent-den4-1.cdninstagram.com/v/t51.2885-19/106623918_555633185104955_8069061714137380269_n.jpg?stp=dst-jpg_s320x320&_nc_ht=scontent-den4-1.cdninstagram.com&_nc_cat=111&_nc_ohc=rsknq1RVRDYAX9MeRkm&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AT8wNcwp__8qTymqhVm6uTyz_UJ2-H1X9ULsE6LEqchCJw&oe=62DB0C11&_nc_sid=8fd12b",
+  "facebookPage": null,
+  "igtvVideoCount": 1,
+  "relatedProfiles": [],
+  "latestIgtvVideos": [
     {
       "type": "Video",
-      "shortCode": "Bw7jACTn3tC",
-      "caption": "“We need to take a stand.” Marvel Studios’ #AvengersEndgame is in theaters now. Get tickets: [link in bio]",
-      "commentsCount": 1045,
-      "dimensionsHeight": 750,
-      "dimensionsWidth": 750,
-      "displayUrl": "https://scontent-ort2-2.cdninstagram.com/vp/c336cf708e62596cd46879656f86ad70/5CCD112C/t51.2885-15/e35/57649006_653609661751971_8438348841277997450_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com",
-      "likesCount": 142707,
-      "videoViewCount": 482810,
-      "timestamp": "2019-05-01T18:44:12.000Z",
-      "locationName": null
-    },
-    // ...
+      "shortCode": "CVdF6ztgMX1",
+      "title": "",
+      "caption": "After the superfun offsite in Croatia, it's good to remind ourselves that we actually work here 😁 So let's rewatch the intro video together ▶️ We mean every word of what we say in it, so it's your call now: would you work with us? Don't hesitate to send in your applications - we can't wait to read them 😉",
+      "commentsCount": 0,
+      "commentsDisabled": false,
+      "dimensionsHeight": 607,
+      "dimensionsWidth": 1080,
+      "displayUrl": "https://scontent-den4-1.cdninstagram.com/v/t51.2885-15/248313208_5056389781056509_753703490695178596_n.jpg?stp=dst-jpg_e15_fr_s1080x1080&_nc_ht=scontent-den4-1.cdninstagram.com&_nc_cat=105&_nc_ohc=SyVDrEa8ZcsAX9zD8Wh&edm=AOQ1c0wBAAAA&ccb=7-5&oh=00_AT-iC3AOk4HgFrNKVfObodaldSR2-POQqKLPr19xqe8oqA&oe=62D5B78B&_nc_sid=8fd12b",
+      "likesCount": 12,
+      "videoDuration": 146.048,
+      "videoViewCount": 137
+    }
+  ],
+  "postsCount": 30,
+  "latestPosts": [
+    {
+      "id": "2860327491559594186",
+      "type": "Image",
+      "shortCode": "Cex7LLrsZjK",
+      "caption": "Our evening with @czechitas was delightful! We loved having these talented and driven women over, sharing their stories, and we look forward to witnessing their success in the IT industry!\n\n#womenintech #womeninstem #womeninit",
+      "hashtags": [
+        "womenintech",
+        "womeninstem",
+        "womeninit"
+      ],
+      "mentions": [
+        "czechitas"
+      ],
+      "url": "https://www.instagram.com/p/Cex7LLrsZjK/",
+      "commentsCount": 3,
+      "dimensionsHeight": 894,
+      "dimensionsWidth": 1080,
+      "displayUrl": "https://scontent-den4-1.cdninstagram.com/v/t51.2885-15/287969419_1468075766976677_7843009915275258936_n.jpg?stp=dst-jpg_e35_s1080x1080&_nc_ht=scontent-den4-1.cdninstagram.com&_nc_cat=105&_nc_ohc=yTSM5EFEZN4AX_qkiiV&edm=AOQ1c0wBAAAA&ccb=7-5&ig_cache_key=Mjg2MDMyNzQ5MTU1OTU5NDE4Ng%3D%3D.2-ccb7-5&oh=00_AT9Je8hSKIS_9siHS_jMRJqxUBN-x767dyJKFbah91AGXQ&oe=62DA9D63&_nc_sid=8fd12b",
+      "images": [],
+      "alt": null,
+      "likesCount": 13,
+      "timestamp": "2022-06-14T09:07:09.000Z",
+      "childPosts": [],
+      "locationName": "Prague, Czech Republic",
+      "locationId": "110589025635590",
+      "ownerFullName": null,
+      "ownerUsername": "apifytech",
+      "ownerId": "29230178602"
+    }
   ]
 }
 ```

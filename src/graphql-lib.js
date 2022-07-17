@@ -1,6 +1,6 @@
 // In the future IG GraphQL processing can be moved to library
 // For now fragments from https://github.com/gippy/instagram-scraper/blob/master/src/details.js
-// except "unhelpfel" helpers like "mapNode" - the point is if helper just renamed single operation its a hassle
+// except "unhelpful" helpers like "mapNode" - the point is if helper just renamed single operation its a hassle
 
 const dedupArrayByProperty = (prop) => (arr) => {
     const map = new Map();
@@ -103,4 +103,32 @@ const formatSinglePost = (node) => {
     };
 };
 
-module.exports = { formatSinglePost };
+/**
+ * Formats IGTV Video Post edge item into nicely formated output item
+ *
+ * @param {Record<string, any>} edge
+ */
+const formatIGTVVideo = (edge) => {
+    const { node } = edge;
+
+    return {
+        type: 'Video',
+        shortCode: node.shortcode,
+        title: node.title,
+        caption: edgesToText(node.edge_media_to_caption?.edges).join('\n') || '',
+        commentsCount: node.edge_media_to_comment?.count,
+        commentsDisabled: node.comments_disabled,
+        dimensionsHeight: node.dimensions.height,
+        dimensionsWidth: node.dimensions.width,
+        displayUrl: node.display_url,
+        likesCount: node.edge_liked_by ? node.edge_liked_by.count : null,
+        videoDuration: node.video_duration || 0,
+        videoViewCount: node.video_view_count,
+        videoPlayCount: node.video_play_count,
+    };
+};
+
+module.exports = {
+    formatSinglePost,
+    formatIGTVVideo,
+};

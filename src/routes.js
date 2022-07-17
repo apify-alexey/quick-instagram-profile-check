@@ -1,21 +1,40 @@
 const Apify = require('apify');
 
 const { extractProfile } = require('./extract');
-const { formatSinglePost } = require('./graphql-lib');
 const { extendFunction } = require('./extend-scraper');
 
 const { utils: { log } } = Apify;
 
-const jsonFromHtml = (body) => {
-    const htmlPrefix = 'window.__additionalDataLoaded(\'extra\',';
-    const htmlPostfix = '});';
-    const idxPrefix = body.indexOf(htmlPrefix);
-    const idxPostfix = body.indexOf(htmlPostfix, idxPrefix);
-    const jtext = body.substr(idxPrefix + htmlPrefix.length, idxPostfix - idxPrefix - htmlPrefix.length + 1);
-    return JSON.parse(jtext);
+exports.apiProfileRequest = (url) => {
+    if (!url) {
+        return [];
+    }
+    const transformUrl = new URL(url?.toLowerCase());
+    const profile = transformUrl.pathname.split('/').filter((x) => x).shift();
+    if (!profile || !transformUrl.host === 'www.instagram.com' || transformUrl.pathname.startsWith('/p/')) {
+        log.warning(`[WRONG_URL]: ${url}`);
+        return [];
+    }
+
+    const apiRequest = {
+        url: `https://i.instagram.com/api/v1/users/web_profile_info/?username=${profile}`,
+        headers: {
+            'x-ig-app-id': '936619743392459',
+            // eslint-disable-next-line max-len
+            'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 12_3_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 Instagram 105.0.0.11.118 (iPhone11,8; iOS 12_3_1; en_US; en-US; scale=2.00; 828x1792; 165586599)',
+        },
+        userData: {
+            origin: url,
+        },
+    };
+    return [apiRequest];
 };
 
-exports.handleInitialInlineJson = async ({ request, body }, input) => {
+exports.handleProfileJson = async ({ request, json }, input) => {
+    if (!(json && json?.data?.user)) {
+        log.error(`[DATA_FAILED], ${request.url}`);
+        return;
+    }
     const extendOutputFunction = await extendFunction({
         output: async (data) => {
             if (!data) {
@@ -27,37 +46,11 @@ exports.handleInitialInlineJson = async ({ request, body }, input) => {
         key: 'extendOutputFunction',
     });
 
-    const inlineJson = jsonFromHtml(body);
-
-    let dataObject;
-    if (inlineJson?.username) {
-        log.info(`[PROFILE]: ${inlineJson?.username}`);
-        dataObject = extractProfile(inlineJson);
-        /*
-        if (followLinks) {
-            const mediaNodes = inlineJson?.graphqlMedia?.map((x) => x.shortcode_media) || [];
-            for (const node of mediaNodes) {
-                if (!node?.shortcode) {
-                    log.warning('[NOSHORTCODE]', node);
-                }
-                await crawler.requestQueue.addRequest({
-                    url: `https://www.instagram.com/p/${node?.shortcode}/embed`,
-                });
-            }
-        }
-        */
-    } else if (inlineJson?.shortcode_media) {
-        log.info(`[POST]: ${inlineJson?.shortcode_media?.shortcode}`);
-        dataObject = formatSinglePost(inlineJson.shortcode_media);
-    } else {
-        log.info(`[MEDIA]: ${request.url}`);
-        dataObject = inlineJson;
-    }
+    const dataObject = extractProfile(json.data.user);
 
     const output = {
         ...dataObject,
         externalUrl: request?.userData?.origin || request.url,
     };
     await extendOutputFunction(output);
-    // await Apify.pushData();
 };
