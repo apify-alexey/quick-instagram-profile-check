@@ -58,7 +58,7 @@ exports.handleProfileJson = async ({ request, json }, input, requestQueue) => {
         await extendOutputFunction(dataObject);
     } else {
         // if not add to separate requestQueue to process by postsCrawler
-        requestQueue.addRequest({
+        await requestQueue.addRequest({
             url: `https://i.instagram.com/api/v1/feed/user/${dataObject.id}/`,
             headers: mobileClientHeaders,
             userData: {

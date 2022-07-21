@@ -49,12 +49,10 @@ Apify.main(async () => {
         await requestQueue.addRequest(singlePost);
     }
 
-    /*
     const isEmpty = await requestQueue.isEmpty();
     if (isEmpty) {
         return;
     }
-    */
 
     proxyConfiguration = await Apify.createProxyConfiguration({ ...proxy, groups: ['RESIDENTIAL'] });
     const postsCrawler = new Apify.CheerioCrawler({
