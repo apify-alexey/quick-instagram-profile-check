@@ -1,6 +1,7 @@
 const Apify = require('apify');
 
-const { apiProfileRequest, handleProfileJson } = require('./src/routes');
+const { apiProfileOrPostRequest, handleProfileJson } = require('./src/routes-profile');
+const { handleFeedUser, handlePostJson, saveProfileData } = require('./src/routes-posts');
 
 const { utils: { log } } = Apify;
 
@@ -20,12 +21,41 @@ Apify.main(async () => {
         log.setLevel(log.LEVELS.DEBUG);
     }
 
-    const requestList = await Apify.openRequestList('start-urls', directUrls.flatMap(apiProfileRequest));
-    const requestQueue = await Apify.openRequestQueue();
-    const proxyConfiguration = await Apify.createProxyConfiguration(proxy);
+    const apiUrls = directUrls.flatMap(apiProfileOrPostRequest);
+    const profileUrls = apiUrls.filter((x) => !x?.userData?.isPost);
+    const singlePostUrls = apiUrls.filter((x) => x?.userData?.isPost);
 
-    const crawler = new Apify.CheerioCrawler({
-        requestList,
+    const requestList = await Apify.openRequestList('start-urls', profileUrls);
+    const requestQueue = await Apify.openRequestQueue();
+    let proxyConfiguration = await Apify.createProxyConfiguration(proxy);
+
+    if (profileUrls?.length) {
+        const profilesCrawler = new Apify.CheerioCrawler({
+            requestList,
+            proxyConfiguration,
+            maxConcurrency: 50,
+            maxRequestRetries,
+            useSessionPool: false,
+            persistCookiesPerSession: false,
+            handlePageFunction: async (context) => {
+                return handleProfileJson(context, input, requestQueue);
+            },
+        });
+        await profilesCrawler.run();
+        log.info('*** Profiles crawl finished ***');
+    }
+
+    for (const singlePost of singlePostUrls) {
+        await requestQueue.addRequest(singlePost);
+    }
+
+    const isEmpty = await requestQueue.isEmpty();
+    if (isEmpty) {
+        return;
+    }
+
+    proxyConfiguration = await Apify.createProxyConfiguration({ ...proxy, groups: ['RESIDENTIAL'] });
+    const postsCrawler = new Apify.CheerioCrawler({
         requestQueue,
         proxyConfiguration,
         maxConcurrency: 50,
@@ -33,10 +63,22 @@ Apify.main(async () => {
         useSessionPool: false,
         persistCookiesPerSession: false,
         handlePageFunction: async (context) => {
-            return handleProfileJson(context, input);
+            const url = context?.request?.url;
+            if (url.includes('api/v1/feed/user/')) {
+                return handleFeedUser(context, input);
+            }
+            if (url.startsWith('https://www.instagram.com/p/')) {
+                return handlePostJson(context);
+            }
+        },
+        handleFailedRequestFunction: async (context) => {
+            const url = context?.request?.url;
+            if (url.includes('api/v1/feed/user/')) {
+                await saveProfileData(context?.request?.userData);
+            }
         },
     });
 
-    await crawler.run();
-    log.info('*** Crawl finished ***');
+    await postsCrawler.run();
+    log.info('*** Posts crawl finished ***');
 });

@@ -14,6 +14,14 @@
       "patternValue": "https:\\/\\/(www\\.)?instagram\\.com\\/.+",
       "uniqueItems": true
     },
+    "resultsLimit": {
+      "title": "Posts per profile (only with RESIDENTIAL proxies)",
+      "type": "integer",
+      "description": "How many posts you want to scrape from each Instagram profile. If you set this to 0, only latest posts will be scraped",
+      "editor": "number",
+      "unit": "per page",
+      "default": 0
+    },
     "proxy": {
       "title": "Proxy configuration",
       "type": "object",
@@ -30,6 +38,13 @@
           "type": "integer",
           "description": "Select how many times the page will be retried if the scraper is blocked or encounters other errors.",
           "default": 3
+      },
+      "debugLog": {
+        "title": "Debug Log",
+        "description": "Enable a more verbose logging to be able to understand what's happening during the scraping.",
+        "type": "boolean",
+        "default": false,
+        "editor": "checkbox"
       }
   },
   "required": [
