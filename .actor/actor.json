@@ -122,11 +122,6 @@
                           "field": "commentsCount"
                         },
                         {
-                          "label": "First comment",
-                          "format": "text",
-                          "field": "firstComment"
-                        },
-                        {
                           "label": "Number of likes",
                           "format": "text",
                           "field": "likesCount"
