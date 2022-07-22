@@ -129,7 +129,43 @@ const formatIGTVVideo = (edge) => {
     };
 };
 
+const mapAPIPostData = (node) => {
+    return {
+        id: node.id,
+        // type: node?.__typename ? node.__typename.replace('Graph', '') : (node.is_video ? 'Video' : 'Image'),
+        type: node.product_type,
+        shortCode: node.code,
+        caption: node.caption?.text,
+        // hashtags: [],
+        // mentions: [],
+        url: node.code ? `https://www.instagram.com/p/${node.code}/` : undefined,
+        commentsCount: node.comment_count,
+        // firstComment: comments?.edges?.[0]?.text ?? '',
+        // topComments: [],
+        dimensionsHeight: node.original_height,
+        dimensionsWidth: node.original_width,
+        displayUrl: node.display_url,
+        images: node?.image_versions2?.candidates?.map((x) => x?.url).filter(Boolean),
+        videoUrl: node?.video_versions?.[0]?.url,
+        // alt: node.accessibility_caption,
+        likesCount: node.like_count,
+        videoViewCount: node.view_count,
+        timestamp: secondsToDate(node.taken_at) || undefined,
+        childPosts: node?.carousel_media?.map?.((child) => mapAPIPostData(child)) ?? undefined,
+        locationName: node.location?.name ?? undefined,
+        locationId: node.location?.pk ?? undefined,
+        ownerFullName: node?.user?.full_name ?? undefined,
+        ownerUsername: node?.user?.username ?? undefined,
+        ownerId: node?.user?.pk ?? undefined,
+        productType: node.product_type,
+        isSponsored: node.commerciality_status !== 'not_commercial',
+        videoDuration: node.video_duration,
+        pk: node.pk,
+    };
+};
+
 module.exports = {
     formatSinglePost,
     formatIGTVVideo,
+    mapAPIPostData,
 };

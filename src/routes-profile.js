@@ -53,7 +53,7 @@ exports.handleProfileJson = async ({ request, json }, input, requestQueue) => {
 
     const dataObject = extractProfile(json.data.user);
     log.debug(`${dataObject?.latestPosts?.length} posts out of ${resultsLimit} for ${dataObject?.username}`);
-    if (!resultsLimit || dataObject?.latestPosts?.length >= resultsLimit) {
+    if (!resultsLimit || dataObject?.latestPosts?.length > resultsLimit) {
         // if we got all posts till the end of results save it
         await extendOutputFunction(dataObject);
     } else {
